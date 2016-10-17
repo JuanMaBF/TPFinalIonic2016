@@ -1,0 +1,23 @@
+<ion-view view-title="INICIO" padding="50px">
+
+  <h1 class="title">INICIO</h1>
+
+  <br> <br>
+	<ion-content>
+		<h2>Usuarios on-line</h2>
+    	<ion-list id="lista-usuarios-online">
+      </ion-list>
+
+      <form ng-submit="subir(desafiado)">
+    	<div class="list">
+      	<label class="item">
+      		<span class="input-label">Ingrese usuario</span>
+          <input type="text" placeholder="" ng-model="desafiado" required>
+        	<button class="button button-block button-positive" type="submit">Desafiar</button>
+      	</label>
+      	<br><br>
+    		</div>
+  		</form>
+
+    </ion-content>
+</ion-view>
