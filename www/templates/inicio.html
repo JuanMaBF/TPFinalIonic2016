@@ -1,0 +1,41 @@
+<ion-view view-title="INICIO" padding="50px">
+
+  <h1 class="title">INICIO</h1>
+
+  <br> <br>
+	<ion-content>
+
+		<h2>Usuarios on-line</h2>
+    <ion-list id="lista-usuarios-online"> <!-- USUARIOS ONLINE --></ion-list>
+
+    <br><br>
+
+    <h2>Crear desafios</h2>
+    <form ng-submit="crear(datos)">
+    	<div class="list">
+      <!-- Descripcion del desafio -->
+      <label class="item">
+      	<span class="input-label">Ingrese usuario</span>
+        <input type="text" placeholder="" ng-model="datos.descripcion">
+      </label>
+      <!-- Seleccion de duracion -->
+      <label class="item">
+        <span class="input-label">Seleccione duración</span>
+        <ion-select ngModel="datos.durac">
+          <ion-option value="1">1 Minuto</ion-option>
+          <ion-option value="2">2 Minutos</ion-option>
+          <ion-option value="3">3 Minutos</ion-option>
+        </ion-select>
+      </label>
+      <!-- Enviar -->
+      <button class="button button-block button-positive" type="submit">Crear desafio</button>
+    	</div>
+  	</form>
+
+    <br><br>
+
+    <h2>Desafios</h2>
+    <ion-list id="lista-desafios"> <!-- USUARIOS ONLINE --></ion-list>    
+
+  </ion-content>
+</ion-view>

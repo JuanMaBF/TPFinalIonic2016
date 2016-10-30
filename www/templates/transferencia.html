@@ -1,0 +1,23 @@
+<ion-view view-title="TRANSFERIR DINERO" padding="50px">
+
+  <h1 class="title">TRANSFERIR DINERO DE UN USUARIO A OTRO</h1>
+
+  <br> <br>
+	<ion-content>
+      <form ng-submit="enviarDinero(transfer)">
+    	<div class="list">
+      	<label class="item">
+      		<span class="input-label">Ingrese usuario</span>
+          <input type="text" placeholder="" ng-model="transfer.usr" required>
+      	</label>
+        <label class="item">
+          <span class="input-label">Ingrese monto</span>
+          <input type="text" placeholder="" ng-model="transfer.cantidad" required>
+        </label>
+        <button class="button button-block button-positive" type="submit">Enviar dinero</button>
+      	<br><br>
+    		</div>
+  		</form>
+
+    </ion-content>
+</ion-view>
