@@ -1,0 +1,38 @@
+<ion-view title="Desafio" id="desafio">
+  <ion-content padding="true" class="has-header">
+    <h1 id="desafio-heading1" style="color:#000000;">Desafio: </h1>
+    <form id="desafio-form1" class="list">
+      <label class="item item-select" id="desafio-select1">
+        <span class="input-label">Monto</span>
+        <select id="desafio-monto" ng-model="monto">
+          <option value="1">1</option>
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+        </select>
+      </label>
+    </form>
+    <h4 id="desafio-heading2" style="color:#000000;">Donde colocar dinero: </h4>
+    <div id="desafio-button-bar1" class="button-bar">
+      <button id="A1" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('A1')">A1</button>
+      <button id="B1" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('B1')">B1</button>
+      <button id="C1" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('C1')">C1</button>
+    </div>
+    <div id="desafio-button-bar2" class="button-bar">
+      <button id="A2" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('A2')">A2</button>
+      <button id="B2" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('B2')">B2</button>
+      <button id="C2" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('C2')">C2</button>
+    </div>
+    <div id="desafio-button-bar3" class="button-bar">
+      <button id="A3" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('A3')">A3</button>
+      <button id="B3" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('B3')">B3</button>
+      <button id="C3" style="border-radius:0px 0px 0px 0px;" class="button button-positive" ng-click="botonPresionado('C3')">C3</button>
+    </div>
+    <input type="hidden" id="desafio-hidden-posicion" name="desafio-hidden-posicion" value=""/>
+    <input type="hidden" id="desafio-iniciado" name="desafio-iniciado" value="false"/>
+
+    <button id="desafio-enviar" class="button button-balanced  button-block" ng-click="crearDesafio(monto)">Desafiar!</button>
+  </ion-content>
+</ion-view>

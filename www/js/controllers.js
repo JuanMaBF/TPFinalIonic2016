@@ -93,9 +93,9 @@ angular.module('apuesta.controllers', [])
         var refUsr = firebase.database().ref('desafios/' + desafios[i].id);
         refUsr.once('value')
           .then(function(snapshot){
-            refUsr.update({
+            /*refUsr.update({
                 finalizado: true
-            });
+            });*/
           })
           .catch(function(error){
             console.info(error);
@@ -219,6 +219,86 @@ angular.module('apuesta.controllers', [])
   }
 
 })
-.controller('TransferenciaCtrl', function($scope, $stateParams, refUsuarioActualVal) {
+
+.controller('DesafioCtrl', function($scope, $stateParams, refUsuarioActualVal) {
+
+  $scope.botonPresionado = function(posicion){
+    /*VERIFICAR QUE EL DESAFIO NO HA COMENZADO*/
+    if($("#desafio-iniciado").val() == "true"){
+      alert("Aun no puede presionar el boton");
+      return;
+    }
+    /*SETEAR TODOS BOTONES EN AZUL*/
+    $("#A1").attr('class', 'button button-positive');
+    $("#A2").attr('class', 'button button-positive');
+    $("#A3").attr('class', 'button button-positive');
+    $("#B1").attr('class', 'button button-positive');
+    $("#B2").attr('class', 'button button-positive');
+    $("#B3").attr('class', 'button button-positive');
+    $("#C1").attr('class', 'button button-positive');
+    $("#C2").attr('class', 'button button-positive');
+    $("#C3").attr('class', 'button button-positive');
+    /*CAMBIAR EL COLOR DEL BOTON SELECCIONADO*/
+    $("#" + posicion).attr('class', 'button button-balanced');
+    /*CAMBIAR VALOR DEL HIDDEN*/
+    $("#desafio-hidden-posicion").val(posicion);
+  }
+
+  $scope.crearDesafio = function(monto){
+    /*VERIFICAR QUE EL USUARIO NO TIENE OTRO DESAFIO*/
+    refUsuarioActualVal.ref.once('value')
+      .then(function(snapshot){
+        var infoUsr = snapshot.val();
+        idUsr = infoUsr.id;
+        refDesafios = firebase.database().ref('desafios');
+
+        refDesafios.once('value')
+          .then(function(snapshot){
+            var desafios = snapshot.val();
+            var flagUsuarioLibre = true;
+            var idDesafioActual;
+            $.each(desafios, function(i){
+              if(desafios[i].creador ==  idUsr && !desafios[i].finalizado){
+                flagUsuarioLibre = false;
+              }
+              idDesafioActual = desafios[i].id;
+            });         
+            idDesafioActual++; 
+            if(flagUsuarioLibre){ /*Setear campos como readonly*/
+              //Monto
+              $("#desafio-monto").attr('disabled', true);
+              //Botones de posicion
+              $("#desafio-iniciado").val(true);
+              //Boton de enviar
+              $("#desafio-enviar").attr('visible', false);
+
+              /*Cargar nuevos datos*/
+              var posicion = $("#desafio-hidden-posicion").val();
+              firebase.database().ref('desafios/' + idDesafioActual).set({
+                id: idDesafioActual,    //Id del ultimo desafio + 1
+                monto: monto,
+                creador: idUsr,         //Id del usuario logueado
+                acepta: "null",
+                dinero1: posicion, 
+                dinero2: "null",
+                selec1: "null",
+                selec2: "null",
+                finalizado: false
+              });
+
+            }else{
+              alert("Este usuario ya tiene un desafio en curso");
+            }
+
+          })
+          .catch(function(error){
+            console.info(error);
+        });
+
+      })
+      .catch(function(error){
+        console.info(error);
+    });
+  }
 
 });
