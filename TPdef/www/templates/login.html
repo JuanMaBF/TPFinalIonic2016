@@ -1,0 +1,20 @@
+<ion-view title="Login" hide-nav-bar="true" id="page6" style="background-color:#6BBECC;">
+  <ion-content padding="true" class="manual-ios-statusbar-padding">
+    <form id="login-form1" class="list" ng-submit="login()">
+      <h1 id="login-heading5" style="color:#2C2121;text-align:center;">Login</h1>
+      <ion-list id="login-list1">
+        <label class="item item-input" id="login-input1">
+          <span class="input-label">Email</span>
+          <input type="text" placeholder="" ng-model="loginData.email">
+        </label>
+        <label class="item item-input" id="login-input2">
+          <span class="input-label">Password</span>
+          <input type="password" placeholder="" ng-model="loginData.password">
+        </label>
+      </ion-list>
+      <div class="spacer" style="height: 40px;"></div>
+      <button id="login-button1" class="button button-stable  button-block" type="submit">Login</button>
+      <a ui-sref="registro" id="login-button2" class="button button-energized  button-block">¿No tenes cuenta? Registrate</a>
+    </form>
+  </ion-content>
+</ion-view>
