@@ -10,7 +10,7 @@ angular.module('app.routes', [])
     
   
 
-      .state('inicio.usuariosOnline', {
+  .state('inicio.usuariosOnline', {
     url: '/usuariosOnline',
     views: {
       'tab3': {
