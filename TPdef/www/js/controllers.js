@@ -57,7 +57,36 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('desafiosCtrl', function ($scope, $stateParams, $ionicPopup) {})
+.controller('desafiosCtrl', function ($scope, $stateParams, $ionicPopup) {
+  firebase.database().ref('Desafios/').on('value', function(snapshot){
+    $('#desafiosActuales').html('');
+    desafios = snapshot.val();
+    var arrayObjetos = $.map(desafios, function(value, index) {
+      return [value];
+    });
+    var el = '';
+    if(snapshot != null){
+      var count = 0;
+      arrayObjetos.forEach(function(element){
+        el += "<div id=\"desafios-container"+count+"\">";
+        el += "<div class=\"spacer\" style=\"width: 300px; height: 24px;\"></div>";
+        el += "<ion-list id=\"desafios-list9\">";
+        el += "<ion-item class=\"item-avatar\" id=\"desafios-list-item18\">";
+        el += "<h2>" + element.nombre.toString() +"</h2>";
+        el += "<p>Dura" + element.tiempoStr.toString() +".</p>";
+        el += "</ion-item>";
+        el += "<ion-radio id=\"desafios-radio5\">Aceptar por §" + element.dinero.toString() + "</ion-radio>";
+        el += "</ion-list>";
+        el += "</div>";
+        count++;
+      });
+    }else{
+      el = "<ion-item id=\"usuariosOnline-list-item11\">No hay usuarios online</ion-item>";
+    }
+    $('#usuariosOnline-list5').html(el);
+    compilarElemento("#usuariosOnline-list5");
+  });
+})
    
 .controller('crearDesafioCtrl', function ($scope, $stateParams, $ionicPopup, $timeout) {
   $scope.crearDesafio = function(data){
@@ -96,6 +125,7 @@ angular.module('app.controllers', [])
     var nombre = data.nombre;
     var dinero = data.dinero.replace('§', '');
     var tiempo;
+    var tiempoStr = data.tiempo;
     switch(data.tiempo){
       case "30 Segundos":
         tiempo = 30000;
@@ -135,6 +165,7 @@ angular.module('app.controllers', [])
           nombre: nombre,
           dinero: dinero,
           tiempo: tiempo,
+          tiempoStr: tiempoStr,
           creador: firebase.auth().currentUser.email,
           acepta1: "null",
           acepta2: "null",
@@ -201,7 +232,7 @@ angular.module('app.controllers', [])
 
   });
 
-  $scope.gane = function(){
+  $scope.resultado = function(resultado){
     firebase.database().ref('Desafios/').once('value').then(function(snapshot){
       var desafioActual;
       var arrayDesafios = $.map(snapshot.val(), function(value, index) {
@@ -224,7 +255,21 @@ angular.module('app.controllers', [])
         cantidadDeJugadores++;
       }
 
-      var dineroGanado = desafioActual.dinero * cantidadDeJugadores;
+      var aCreador = 0;
+      var aAcepta1 = 0;
+      var aAcepta2 = 0;
+      var aAcepta3 = 0;
+      if(resultado == "gane"){
+        aCreador += desafioActual.dinero * cantidadDeJugadores;
+        aAcepta1 -= desafioActual.dinero;
+        aAcepta2 -= desafioActual.dinero;
+        aAcepta3 -= desafioActual.dinero;
+      }else if(resultado == "perdi"){
+        aCreador -= desafioActual.dinero;
+        aAcepta1 += desafioActual / cantidadDeJugadores;
+        aAcepta2 += desafioActual / cantidadDeJugadores;
+        aAcepta3 += desafioActual / cantidadDeJugadores;
+      }
 
       firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
         usuarios = snapshot.val();
@@ -236,9 +281,13 @@ angular.module('app.controllers', [])
         });
         for(i=0; i<arrayObjetos.length; i++){
           if(arrayObjetos[i].email == firebase.auth().currentUser.email){
-            var nuevoDinero = arrayObjetos.dinero + dineroGanado;
+            var nuevoDinero = arrayObjetos[i].dinero + aCreador;
+            console.log("A creador: " + aCreador);
+            console.log("Nuevo dinero: " + nuevoDinero);
             firebase.database().ref('Usuarios/' + arrayIndex[i]).set({
-              dinero: nuevoDinero
+              dinero: nuevoDinero,
+              email: firebase.auth().currentUser.email,
+              nombre: firebase.auth().currentUser.displayName
             });
           }
         }
