@@ -35,12 +35,12 @@ angular.module('app.controllers', [])
 
   firebase.database().ref('UsuariosOnline/').on('value', function(snapshot){
     $('#usuariosOnline-list5').html('');
-    usuarios = snapshot.val();
-    var arrayObjetos = $.map(usuarios, function(value, index) {
-      return [value];
-    });
     var el = '';
-    if(snapshot != null){
+    if(snapshot.val() != null){
+      usuarios = snapshot.val();
+      var arrayObjetos = $.map(usuarios, function(value, index) {
+        return [value];
+      });
       var count = 0;
       arrayObjetos.forEach(function(element){
         el += "<ion-item id=\"usuariosOnline-list-item"+count+"\">";
@@ -57,15 +57,17 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('desafiosCtrl', function ($scope, $stateParams, $ionicPopup) {
+.controller('desafiosCtrl', function ($scope, $stateParams, $ionicPopup, $timeout) {
+
+  
   firebase.database().ref('Desafios/').on('value', function(snapshot){
     $('#desafiosActuales').html('');
-    desafios = snapshot.val();
-    var arrayObjetos = $.map(desafios, function(value, index) {
-      return [value];
-    });
     var el = '';
-    if(snapshot != null){
+    if(snapshot.val() != null){
+      desafios = snapshot.val();
+      var arrayObjetos = $.map(desafios, function(value, index) {
+        return [value];
+      });
       var count = 0;
       arrayObjetos.forEach(function(element){
         el += "<div id=\"desafios-container"+count+"\">";
@@ -73,19 +75,67 @@ angular.module('app.controllers', [])
         el += "<ion-list id=\"desafios-list9\">";
         el += "<ion-item class=\"item-avatar\" id=\"desafios-list-item18\">";
         el += "<h2>" + element.nombre.toString() +"</h2>";
-        el += "<p>Dura" + element.tiempoStr.toString() +".</p>";
+        el += "<p>Dura " + element.tiempoStr.toString() +".</p>";
         el += "</ion-item>";
-        el += "<ion-radio id=\"desafios-radio5\">Aceptar por §" + element.dinero.toString() + "</ion-radio>";
+        el += "<ion-radio id=\"desafios-radio6\" ng-model=\"data.nombreDesafio\" value=\"" + element.nombre.toString() + "\">Aceptar por §" + element.dinero.toString() + "</ion-radio>";
         el += "</ion-list>";
         el += "</div>";
         count++;
       });
+      el += "<button type=\"submit\" id=\"desafios-button5\" style=\"font-weight:600;\" class=\"button button-energized  button-block\">Aceptar desafio</button>";
     }else{
-      el = "<ion-item id=\"usuariosOnline-list-item11\">No hay usuarios online</ion-item>";
+      el = "<ion-item id=\"usuariosOnline-list-item11\">No hay desafios...</ion-item>";
     }
-    $('#usuariosOnline-list5').html(el);
-    compilarElemento("#usuariosOnline-list5");
+    $('#desafiosActuales').html(el);
+    compilarElemento("#desafiosActuales");
   });
+
+  $scope.aceptar = function(){
+    var nombreDesafio = $('input.ng-valid-parse').val();
+
+    console.log(nombreDesafio);
+
+    firebase.database().ref('Desafios/').once('value').then(function(snapshot){
+
+      var arrayObjetos = $.map(snapshot.val(), function(value, index) {
+        return [value];
+      });
+      var arrayIndex = $.map(snapshot.val(), function(value, index) {
+        return [index];
+      });
+
+      for(i=0; i<arrayObjetos.length; i++){
+        if(arrayObjetos[i].nombre == nombreDesafio){
+
+          if(arrayObjetos[i].acepta1 == "null"){
+            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
+              acepta1: firebase.auth().currentUser.displayName
+            });
+          } else if(arrayObjetos[i].acepta2 == "null"){
+            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
+              acepta2: firebase.auth().currentUser.displayName
+            });
+          } else if(arrayObjetos[i].acepta3 == "null"){
+            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
+              acepta3: firebase.auth().currentUser.displayName
+            });
+          }else{
+            var myPopup = $ionicPopup.show({
+	            template: '<center>El desafio ya fue aceptado por tres personas</center>',
+	            title: 'No hay espacio'
+	          });
+            $timeout(function(){
+              myPopup.close();
+            }, 3000);
+            return;
+          }
+          location.href = '#/desafioAceptado';
+        }
+      }
+
+    });
+  }
+
 })
    
 .controller('crearDesafioCtrl', function ($scope, $stateParams, $ionicPopup, $timeout) {
@@ -468,4 +518,3 @@ function compilarElemento(elemento) {
     }]);
   }
 }
- 
