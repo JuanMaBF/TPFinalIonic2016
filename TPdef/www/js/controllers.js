@@ -55,9 +55,27 @@ angular.module('app.controllers', [])
     compilarElemento("#usuariosOnline-list5");
   });
 
+  firebase.database().ref('Usuarios/').on('value', function(snapshot){
+    $('#dinero-list5').html('');
+    usuarios = snapshot.val();
+    var arrayObjetos = $.map(usuarios, function(value, index) {
+      return [value];
+    });
+    var usrActual
+    arrayObjetos.forEach(elemento => {
+      if(elemento.email == firebase.auth().currentUser.email){
+        usrActual = elemento;
+      }
+    })
+    console.log(usrActual);
+    el = "<ion-item id=\"usuariosOnline-list-item11\">Dinero actual: §" + usrActual.dinero + "</ion-item>";
+    $('#dinero-list5').html(el);
+    compilarElemento("#dinero-list5");
+  });
+
 })
 
-.controller('desafiosCtrl', function ($scope, $stateParams, $ionicPopup, $timeout) {
+.controller('desafiosCtrl', function ($scope, $stateParams, $ionicPopup, $timeout, $location) {
 
   
   firebase.database().ref('Desafios/').on('value', function(snapshot){
@@ -70,19 +88,27 @@ angular.module('app.controllers', [])
       });
       var count = 0;
       arrayObjetos.forEach(function(element){
-        el += "<div id=\"desafios-container"+count+"\">";
-        el += "<div class=\"spacer\" style=\"width: 300px; height: 24px;\"></div>";
-        el += "<ion-list id=\"desafios-list9\">";
-        el += "<ion-item class=\"item-avatar\" id=\"desafios-list-item18\">";
-        el += "<h2>" + element.nombre.toString() +"</h2>";
-        el += "<p>Dura " + element.tiempoStr.toString() +".</p>";
-        el += "</ion-item>";
-        el += "<ion-radio id=\"desafios-radio6\" ng-model=\"data.nombreDesafio\" value=\"" + element.nombre.toString() + "\">Aceptar por §" + element.dinero.toString() + "</ion-radio>";
-        el += "</ion-list>";
-        el += "</div>";
-        count++;
+        if(element.resultado == "null"){
+          el += "<div id=\"desafios-container"+count+"\">";
+          el += "<div class=\"spacer\" style=\"width: 300px; height: 24px;\"></div>";
+          el += "<ion-list id=\"desafios-list9\">";
+          el += "<ion-item class=\"item-avatar\" id=\"desafios-list-item18\">";
+          el += "<h2>" + element.nombre.toString() +"</h2>";
+          el += "<p>Dura " + element.tiempoStr.toString() +".</p>";
+          el += "</ion-item>";
+          el += "<div class='classInputContainer'>";
+          el += "<ion-radio ng-model=\"data.nombreDesafio\" value=\"" + element.nombre.toString() + "\">Aceptar por §" + element.dinero.toString() + "</ion-radio>";
+          el += "<div>";
+          el += "</ion-list>";
+          el += "</div>";
+          count++;
+        }
       });
-      el += "<button type=\"submit\" id=\"desafios-button5\" style=\"font-weight:600;\" class=\"button button-energized  button-block\">Aceptar desafio</button>";
+      if(count != 0){
+        el += "<button type=\"submit\" id=\"desafios-button5\" style=\"font-weight:600;\" class=\"button button-energized  button-block\">Aceptar desafio</button>";
+      }else{
+        el = "<ion-item id=\"usuariosOnline-list-item11\">No hay desafios...</ion-item>";
+      }
     }else{
       el = "<ion-item id=\"usuariosOnline-list-item11\">No hay desafios...</ion-item>";
     }
@@ -91,9 +117,7 @@ angular.module('app.controllers', [])
   });
 
   $scope.aceptar = function(){
-    var nombreDesafio = $('input.ng-valid-parse').val();
-
-    console.log(nombreDesafio);
+    var nombreDesafio = $('.classInputContainer').find('.ng-valid-parse').val();
 
     firebase.database().ref('Desafios/').once('value').then(function(snapshot){
 
@@ -109,15 +133,18 @@ angular.module('app.controllers', [])
 
           if(arrayObjetos[i].acepta1 == "null"){
             firebase.database().ref('Desafios/' + arrayIndex[i]).update({
-              acepta1: firebase.auth().currentUser.displayName
+              acepta1: firebase.auth().currentUser.displayName,
+              acepta1Email: firebase.auth().currentUser.email
             });
           } else if(arrayObjetos[i].acepta2 == "null"){
             firebase.database().ref('Desafios/' + arrayIndex[i]).update({
-              acepta2: firebase.auth().currentUser.displayName
+              acepta2: firebase.auth().currentUser.displayName,
+              acepta2Email: firebase.auth().currentUser.email
             });
           } else if(arrayObjetos[i].acepta3 == "null"){
             firebase.database().ref('Desafios/' + arrayIndex[i]).update({
-              acepta3: firebase.auth().currentUser.displayName
+              acepta3: firebase.auth().currentUser.displayName,
+              acepta3Email: firebase.auth().currentUser.email
             });
           }else{
             var myPopup = $ionicPopup.show({
@@ -207,9 +234,11 @@ angular.module('app.controllers', [])
       arrayObjetos.forEach(usr => {
         if(usr.email == firebase.auth().currentUser.email){
           dineroActual = usr.dinero;
+          console.log('usr.dinero: ' + usr.dinero);
         }
       });
-
+      console.log('dineroActual: ' + dineroActual);
+      console.log('dinero: ' + dinero);
       if(dinero <= dineroActual){
         firebase.database().ref('Desafios/').push({
           nombre: nombre,
@@ -217,9 +246,14 @@ angular.module('app.controllers', [])
           tiempo: tiempo,
           tiempoStr: tiempoStr,
           creador: firebase.auth().currentUser.email,
+          creadorName: firebase.auth().currentUser.displayName,
           acepta1: "null",
           acepta2: "null",
-          acepta3: "null"
+          acepta3: "null",
+          acepta1Email: "null",
+          acepta2Email: "null",
+          acepta3Email: "null",
+          resultado: "null"
         });
         location.href="#/desafioCreado";
       }else{
@@ -316,10 +350,13 @@ angular.module('app.controllers', [])
         aAcepta3 -= desafioActual.dinero;
       }else if(resultado == "perdi"){
         aCreador -= desafioActual.dinero;
-        aAcepta1 += desafioActual / cantidadDeJugadores;
-        aAcepta2 += desafioActual / cantidadDeJugadores;
-        aAcepta3 += desafioActual / cantidadDeJugadores;
+        aAcepta1 += desafioActual.dinero / cantidadDeJugadores;
+        aAcepta2 += desafioActual.dinero / cantidadDeJugadores;
+        aAcepta3 += desafioActual.dinero / cantidadDeJugadores;
       }
+
+      console.log('cantida de jugadores: ' + cantidadDeJugadores);
+      console.log('aAcepta1: ' + aAcepta1)
 
       firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
         usuarios = snapshot.val();
@@ -332,12 +369,27 @@ angular.module('app.controllers', [])
         for(i=0; i<arrayObjetos.length; i++){
           if(arrayObjetos[i].email == firebase.auth().currentUser.email){
             var nuevoDinero = arrayObjetos[i].dinero + aCreador;
-            console.log("A creador: " + aCreador);
-            console.log("Nuevo dinero: " + nuevoDinero);
-            firebase.database().ref('Usuarios/' + arrayIndex[i]).set({
-              dinero: nuevoDinero,
-              email: firebase.auth().currentUser.email,
-              nombre: firebase.auth().currentUser.displayName
+            firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
+              dinero: nuevoDinero
+            });
+          }
+          if((arrayObjetos[i].email == desafioActual.acepta1Email) && (cantidadDeJugadores > 0)){
+            var nuevoDinero = arrayObjetos[i].dinero + aAcepta1;
+            console.log(nuevoDinero);
+            firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
+              dinero: nuevoDinero
+            });
+          }
+          if((arrayObjetos[i].email == desafioActual.acepta2Email) && (cantidadDeJugadores > 1)){
+            var nuevoDinero = arrayObjetos[i].dinero + aAcepta2;
+            firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
+              dinero: nuevoDinero
+            });
+          }
+          if((arrayObjetos[i].email == desafioActual.acepta3Email) && (cantidadDeJugadores > 2)){
+            var nuevoDinero = arrayObjetos[i].dinero + aAcepta3;
+            firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
+              dinero: nuevoDinero
             });
           }
         }
@@ -352,25 +404,77 @@ angular.module('app.controllers', [])
         });
         for(i=0; i<arrayObjetos.length; i++){
           if(arrayObjetos[i].creador == firebase.auth().currentUser.email){
-            firebase.database().ref('Desafios/' + arrayIndex[i]).set({
-              nombre: null,
-              dinero: null,
-              tiempo: null,
-              creador: null,
-              acepta1: null,
-              acepta2: null,
-              acepta3: null
+            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
+              resultado: resultado
             });
           }
         }
       });
-
+      location.href="#/inicio/usuariosOnline";
     });
   }
 
 })
    
-.controller('desafioAceptadoCtrl', function ($scope, $stateParams) {})
+.controller('desafioAceptadoCtrl', function ($scope, $stateParams, $timeout) {
+  
+  firebase.database().ref().on('value', function(snapshot){
+    var ref = firebase.database().ref('Desafios/');
+    ref.once('value').then(function(snapshot){
+
+      var desafioActual = 'nada';
+      var arrayDesafios = $.map(snapshot.val(), function(value, index) {
+        return [value];
+      });
+      var mailAct = firebase.auth().currentUser.email
+      arrayDesafios.forEach(des => {
+        if(des.acepta1Email == mailAct || des.acepta2Email ==mailAct || des.acepta3Email == mailAct){
+          desafioActual = des;
+        }
+      });
+
+      if(desafioActual.resultado != "null"){
+        if(desafioActual.resultado == "perdi"){
+          alert("GANASTE");
+          location.href="#/inicio/usuariosOnline";
+        }else{
+          alert("Perdiste :(");
+          location.href="#/inicio/usuariosOnline";
+        }
+      }
+
+      $timeout(function(){
+        $('#divCosas').html('');
+        var el = '';
+        el += "<ion-content padding=\"true\" class=\"manual-ios-statusbar-padding\">";
+        el += '<h2 id="desafioAceptado-heading7" style="color:#000000;font-weight:600;text-align:center;">Desafio aceptado</h2>';
+        el += '<h2 id="desafioAceptado-heading4" style="color:#2C2121;text-align:center;">Creador</h2>';
+        el += '<ion-list id="desafioAceptado-list15">';
+        el += '<ion-item id="desafioAceptado-list-item31">' + desafioActual.creadorName + '</ion-item>'
+        el += '</ion-list>';
+        el += '<h2 id="desafioAceptado-heading3" style="color:#2C2121;text-align:center;">Aceptaron</h2>';
+        el += '<ion-list id="desafioAceptado-list14">';
+        el += "<ion-item id=\"desafioAceptado-list-item28\"> VOS </ion-item>";
+
+        if(desafioActual.acepta1 != "null" && desafioActual.acepta1Email != mailAct){
+          el += "<ion-item id=\"desafioAceptado-list-item28\">" + desafioActual.acepta1 + "</ion-item>";
+        }
+        if(desafioActual.acepta2 != "null" && desafioActual.acepta2Email != mailAct){
+          el += "<ion-item id=\"desafioAceptado-list-item28\">" + desafioActual.acepta2 + "</ion-item>";
+        }
+        if(desafioActual.acepta3 != "null" && desafioActual.acepta3Email != mailAct){
+          el += "<ion-item id=\"desafioAceptado-list-item28\">" + desafioActual.acepta3 + "</ion-item>";
+        }
+        el += "</ion-list>";
+        el += "</ion-content>";
+
+        $('#divCosas').html(el);
+        compilarElemento('#divCosas');
+      }, 1000);
+
+    });
+  });
+})
       
 .controller('loginCtrl', function ($scope, $stateParams, $ionicPopup, $timeout) {
 
