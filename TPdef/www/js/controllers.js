@@ -531,9 +531,31 @@ angular.module('app.controllers', [])
 		  });
 	}
 
+  $('#test-button3').click(function(){
+    $('#login-email').val('test1@email.com');
+    $('#login-password').val('estoesuntest123');
+  });
+
+  $('#test-button4').click(function(){
+    $('#login-email').val('test2@email.com');
+    $('#login-password').val('estoesuntest123');
+  });
+
 })
 
 .controller('registroCtrl', function ($scope, $stateParams, $ionicPopup, $timeout) {
+
+  $('#test-button1').click(function(){
+    $('#nombre-registro').val('Uno');
+    $('#email-registro').val('test1@email.com');
+    $('#pass-registro').val('estoesuntest123');
+  });
+
+  $('#test-button1').click(function(){
+    $('#nombre-registro').val('Dos');
+    $('#email-registro').val('test2@email.com');
+    $('#pass-registro').val('estoesuntest123');
+  });
 
   $scope.regData = {};
   // Hacer logueo
@@ -609,6 +631,7 @@ angular.module('app.controllers', [])
         console.info(error);
       });
   }
+
 });
 
 function compilarElemento(elemento) {

@@ -5,16 +5,19 @@
       <ion-list id="login-list1">
         <label class="item item-input" id="login-input1">
           <span class="input-label">Email</span>
-          <input type="text" placeholder="" ng-model="loginData.email">
+          <input id="login-email" name="login-email" type="text" placeholder="" ng-model="loginData.email">
         </label>
         <label class="item item-input" id="login-input2">
           <span class="input-label">Password</span>
-          <input type="password" placeholder="" ng-model="loginData.password">
+          <input id="login-password" name="login-password" type="password" placeholder="" ng-model="loginData.password">
         </label>
       </ion-list>
       <div class="spacer" style="height: 40px;"></div>
       <button id="login-button1" class="button button-stable  button-block" type="submit">Login</button>
       <a ui-sref="registro" id="login-button2" class="button button-energized  button-block">¿No tenes cuenta? Registrate</a>
     </form>
+    <h6> TEST BUTTONS </h6>
+    <button id="test-button3" class="button button-stable  button-block" type="button">Usuario Uno</button>
+    <button id="test-button4" class="button button-stable  button-block" type="button">Usuario Dos</button>
   </ion-content>
 </ion-view>
