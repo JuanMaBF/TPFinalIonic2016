@@ -51,6 +51,7 @@ angular.module('app.controllers', [])
     }else{
       el = "<ion-item id=\"usuariosOnline-list-item11\">No hay usuarios online</ion-item>";
     }
+
     $('#usuariosOnline-list5').html(el);
     compilarElemento("#usuariosOnline-list5");
   });
@@ -67,8 +68,9 @@ angular.module('app.controllers', [])
         usrActual = elemento;
       }
     })
-    console.log(usrActual);
     el = "<ion-item id=\"usuariosOnline-list-item11\">Dinero actual: §" + usrActual.dinero + "</ion-item>";
+    el += "<a href=\"#/inicio/crearDesafio\" id=\"login-button2\" class=\"button button-energized  button-block\">CREAR DESAFIO</a>"
+    el += "<a href=\"#/inicio/desafios\" id=\"login-button2\" class=\"button button-energized  button-block\">VER DESAFIOS ACTUALES</a>"
     $('#dinero-list5').html(el);
     compilarElemento("#dinero-list5");
   });
@@ -112,6 +114,7 @@ angular.module('app.controllers', [])
     }else{
       el = "<ion-item id=\"usuariosOnline-list-item11\">No hay desafios...</ion-item>";
     }
+    el += "<a href=\"#/inicio/crearDesafio\" id=\"login-button2\" class=\"button button-energized  button-block\">CREAR DESAFIO</a>"
     $('#desafiosActuales').html(el);
     compilarElemento("#desafiosActuales");
   });
