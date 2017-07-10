@@ -534,11 +534,19 @@ angular.module('app.controllers', [])
   $('#test-button3').click(function(){
     $('#login-email').val('test1@email.com');
     $('#login-password').val('estoesuntest123');
+    $scope.regData = {
+      email: "test1@email.com",
+      password: "estoesuntest123"
+    }
   });
 
   $('#test-button4').click(function(){
     $('#login-email').val('test2@email.com');
     $('#login-password').val('estoesuntest123');
+    $scope.regData = {
+      email: "test2@email.com",
+      password: "estoesuntest123"
+    }
   });
 
 })
@@ -549,17 +557,28 @@ angular.module('app.controllers', [])
     $('#nombre-registro').val('Uno');
     $('#email-registro').val('test1@email.com');
     $('#pass-registro').val('estoesuntest123');
+    $scope.regData = {
+      email: "test1@email.com",
+      nombre: "Uno",
+      password: "estoesuntest123"
+    }
   });
 
-  $('#test-button1').click(function(){
+  $('#test-button2').click(function(){
     $('#nombre-registro').val('Dos');
     $('#email-registro').val('test2@email.com');
     $('#pass-registro').val('estoesuntest123');
+    $scope.regData = {
+      email: "test2@email.com",
+      nombre: "Dos",
+      password: "estoesuntest123"
+    }
   });
 
   $scope.regData = {};
   // Hacer logueo
   $scope.registrar = function() {
+    console.log($scope.regData);
     /*Validar datos de logueo*/
     if($scope.regData.nombre == null){ 
       alert("Ingrese un nombre.");
