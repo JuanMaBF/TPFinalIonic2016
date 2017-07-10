@@ -537,7 +537,7 @@ angular.module('app.controllers', [])
   $('#test-button3').click(function(){
     $('#login-email').val('test1@email.com');
     $('#login-password').val('estoesuntest123');
-    $scope.regData = {
+    $scope.loginData = {
       email: "test1@email.com",
       password: "estoesuntest123"
     }
@@ -546,7 +546,7 @@ angular.module('app.controllers', [])
   $('#test-button4').click(function(){
     $('#login-email').val('test2@email.com');
     $('#login-password').val('estoesuntest123');
-    $scope.regData = {
+    $scope.loginData = {
       email: "test2@email.com",
       password: "estoesuntest123"
     }
