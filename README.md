@@ -1,2 +1,4 @@
 # TPFinalIonic2016
-juego online, Generador de desafíos / batalla naval
+
+- Firebase: https://console.firebase.google.com/project/votacion-f0c45
+- ID del APP: 65273D82
