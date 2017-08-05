@@ -242,6 +242,7 @@ angular.module('app.controllers', [])
       });
       if(dinero <= dineroActual){
           if(desafioActual == "null"){
+            var date = new Date();
             firebase.database().ref('Desafios/').push({
               nombre: nombre,
               dinero: dinero,
@@ -251,7 +252,9 @@ angular.module('app.controllers', [])
               creadorName: firebase.auth().currentUser.displayName,
               acepta1: "null",
               acepta1Email: "null",
-              resultado: Math.round(Math.random())
+              resultado: Math.round(Math.random()),
+              minutes: date.getMinutes(),
+              hour: date.getHours()
             });
 
             firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
@@ -316,28 +319,27 @@ angular.module('app.controllers', [])
             if(arrayObjetos[i].desafio == des.nombre){
               /*********/
               tiempo = des.tiempo;
-              if(tiempo != 0){
-                firebase.database().ref('Desafios/').on('value', function(snapshot){
-                  var desafioActual;
-                  var arrayDesafios = $.map(snapshot.val(), function(value, index) {
-                    return [value];
-                  });
-                  arrayDesafios.forEach(des => {
-                    if(des.creador == firebase.auth().currentUser.email){
-                      desafioActual = des;
-                    }
-                  });
-                  var el = '';
-                  if(desafioActual.acepta1 != "null"){
-                    el += "<ion-item id=\"desafioActual-list-item25\">"+ desafioActual.acepta1 +"</ion-item>";
+              firebase.database().ref('Desafios/').on('value', function(snapshot){
+                var desafioActual;
+                var arrayDesafios = $.map(snapshot.val(), function(value, index) {
+                  return [value];
+                });
+                arrayDesafios.forEach(des => {
+                  if(des.creador == firebase.auth().currentUser.email){
+                    desafioActual = des;
                   }
-                  if(el == ''){
-                    el += "<ion-item id=\"desafioActual-list-item27\">NADIE ACEPTA AUN EL DESAFIO</ion-item>";
-                  }
-                  $('#desafioActual-list13').html(el);
-                  compilarElemento('#desafioActual-list13');
-                });    
-              }
+                });
+                var el = '';
+                if(desafioActual.acepta1 != "null"){
+                  el += "<ion-item id=\"desafioActual-list-item25\">"+ desafioActual.acepta1 +"</ion-item>";
+                }
+                if(el == ''){
+                  el += "<ion-item id=\"desafioActual-list-item27\">NADIE ACEPTA AUN EL DESAFIO</ion-item>";
+                }
+                $('#desafioActual-list13').html(el);
+                compilarElemento('#desafioActual-list13');
+                iniciarReloj(desafioActual.tiempo, desafioActual.minutes, desafioActual.hour);
+              });    
               /*********/
             }
           });
@@ -345,13 +347,31 @@ angular.module('app.controllers', [])
       }
 
       $timeout(function(){
-        if(){
-          cargarPagSinDesafio();  
+        if(tiempo == 0){
+          $scope.cargarPagSinDesafio();  
         }
-      }, 1000);
+      }, 500);
 
     });
   });
+
+  function iniciarReloj(milisegundos, minutos, horas){
+    var date = new Date();
+    var minutes = date.getMinutes();
+    var hour = date.getHours();
+    var total = minutos*(60000);
+    total = horas*(60000)
+  }
+
+  $scope.cargarPagSinDesafio = function(){
+    $("#desafioActual-heading8").html('Usted no tiene ningun desafio actual');
+    $("#desafioActual-heading2").html('');
+    $("#desafioActual-list-item25").html('');
+    $("#contador").html('00:00');
+    var el = "<ion-item id=\"desafioActual-list-item27\"></ion-item>";
+    $('#desafioActual-list13').html(el);
+    compilarElemento('#desafioActual-list13');
+  }
 
   $scope.resultado = function(){
     firebase.database().ref('Desafios/').once('value').then(function(snapshot){
