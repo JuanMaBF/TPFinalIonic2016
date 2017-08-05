@@ -1,0 +1,34 @@
+<ion-view title="Crear Desafio" id="page10" style="background-color:#6BBECC;">
+  <ion-content padding="true" class="has-header">
+    <form id="crearDesafio-form4" class="list">
+      <h3 id="crearDesafio-heading1" style="color:#2C2121;text-align:center;">Datos el desafio</h3>
+      <label class="item item-input" id="crearDesafio-input7">
+        <span class="input-label">Nombre</span>
+        <input type="text" placeholder="" ng-model="desafioData.nombre">
+      </label>
+      <label class="item item-select" id="crearDesafio-select1">
+        <span class="input-label">Dinero</span>
+        <select ng-model="desafioData.dinero">
+          <option>§1</option>
+          <option>§5</option>
+          <option>§10</option>
+          <option>§50</option>
+          <option>§100</option>
+          <option>§1000</option>
+        </select>
+      </label>
+      <label class="item item-select" id="crearDesafio-select3">
+        <span class="input-label">Tiempo</span>
+        <select ng-model="desafioData.tiempo">
+          <option>30 Segundos</option>
+          <option>1 Minuto</option>
+          <option>10 Minutos</option>
+          <option>30 Minutos</option>
+          <option>1 Hora</option>
+          <option>2 Horas</option>
+        </select>
+      </label>
+      <button id="crearDesafio-button6" style="font-weight:600;" class="button button-energized  button-block" ng-click="crearDesafio(desafioData)">Crear!</button>
+    </form>
+  </ion-content>
+</ion-view>

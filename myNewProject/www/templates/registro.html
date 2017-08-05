@@ -1,0 +1,27 @@
+<ion-view title="Registro" hide-nav-bar="true" nav-transition="none" id="page7" style="background-color:#6BBECC;">
+  <ion-content padding="true" class="manual-ios-statusbar-padding">
+    <h1 id="registro-heading6" style="color:#2C2121;text-align:center;">Registro</h1>
+    <form id="registro-form2" class="list" ng-submit="registrar()">
+      <ion-list id="registro-list2">
+        <label class="item item-input" id="registro-input3">
+          <span class="input-label">Nombre</span>
+          <input id="nombre-registro" name="nombre-registro" type="text" placeholder="" ng-model="regData.nombre">
+        </label>
+        <label class="item item-input" id="registro-input4">
+          <span class="input-label">Email</span>
+          <input id="email-registro" name="email-registro" type="text" placeholder="" ng-model="regData.email">
+        </label>
+        <label class="item item-input" id="registro-input5">
+          <span class="input-label">Password</span>
+          <input id="pass-registro" name="nombre-registro" type="password" placeholder="" ng-model="regData.password">
+        </label>
+      </ion-list>
+      <div class="spacer" style="height: 40px;"></div>
+      <button id="registro-button3" class="button button-stable  button-block" type="submit">Sign up</button>
+      <a ui-sref="login" id="registro-button4" class="button button-energized  button-block">¿No tenes cuenta? Registrate</a>
+    </form>
+    <h6> TEST BUTTONS </h6>
+    <button id="test-button1" class="button button-stable  button-block" type="button">Usuario Uno</button>
+    <button id="test-button2" class="button button-stable  button-block" type="button">Usuario Dos</button>
+  </ion-content>
+</ion-view>
