@@ -400,8 +400,8 @@ angular.module('app.controllers', [])
           var aAcepta1 = 0;
 
           if(desafioActual.resultado == 0){ //Gana el creador
-            aCreador += desafioActual.dinero + 0;
-            aAcepta1 -= desafioActual.dinero + 0;
+            aCreador += parseInt(desafioActual.dinero);
+            aAcepta1 -= parseInt(desafioActual.dinero);
             if(desafioActual.creador ==firebase.auth().currentUser.email && desafioActual.acepta1 != "null"){
               var myPopup = $ionicPopup.show({
               template: '<center>Ganaste :)</center>',
@@ -415,10 +415,10 @@ angular.module('app.controllers', [])
               template: '<center>Nadie aceptó el desafio :(</center>',
               title: 'Nadie me quiere, todos me odian'
               });
+              aAcepta1 = 0;
               $timeout(function(){
                 myPopup.close();
               }, 3000);
-              aAcepta1 = 0;
               location.href="#/inicio/usuariosOnline";
             } else {
               var myPopup = $ionicPopup.show({
@@ -430,8 +430,8 @@ angular.module('app.controllers', [])
               }, 3000);
             }
           }else if(desafioActual.resultado == 1){ //Gana el que aceptó
-            aCreador -= desafioActual.dinero;
-            aAcepta1 += desafioActual.dinero;
+            aCreador -= parseInt(desafioActual.dinero);
+            aAcepta1 += parseInt(desafioActual.dinero);
           }
 
           firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
