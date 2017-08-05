@@ -356,11 +356,22 @@ angular.module('app.controllers', [])
   });
 
   function iniciarReloj(milisegundos, minutos, horas){
+    var totalObj = minutos*(60000);
+    totalObj += horas*(360000) + milisegundos;
+
     var date = new Date();
     var minutes = date.getMinutes();
     var hour = date.getHours();
-    var total = minutos*(60000);
-    total = horas*(60000)
+    var totalReal = minutes*(60000) + hour*(360000);
+    var diferencia = totalObj - totalReal;
+    $("#contador").html('00:' + diferencia/1000);
+    $timeout(function(){
+      diferencia -= 1000;
+      if(diferencia > 0){
+        console.log(diferencia);
+        iniciarReloj(milisegundos, minutos, horas)
+      }
+    }, 1000);
   }
 
   $scope.cargarPagSinDesafio = function(){
