@@ -694,12 +694,6 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('verDesafioCtrl', function ($scope, $stateParams, $ionicPopup) {
-
-  /*VER DESAFIO PUNTUAL*/
-
-});
-
 function compilarElemento(elemento) {
   var elemento = (typeof elemento == "string") ? elemento : null;  
   if (elemento != null) {

@@ -48,17 +48,7 @@ angular.module('app.routes', [])
         controller: 'listaDesafiosCtrl'
       }
     }
-  })
-
-  .state('inicio.verDesafio', {
-    url: '/verDesafio',
-    views: {
-      'tab7': {
-        templateUrl: 'templates/verDesafio.html',
-        controller: 'verDesafioCtrl'
-      }
-    }
-  })
+  }) 
 
   .state('inicio.desafioActual', {
     url: '/desafioActual',
