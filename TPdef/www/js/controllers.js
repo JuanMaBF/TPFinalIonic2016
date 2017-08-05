@@ -140,19 +140,9 @@ angular.module('app.controllers', [])
               acepta1: firebase.auth().currentUser.displayName,
               acepta1Email: firebase.auth().currentUser.email
             });
-          } else if(arrayObjetos[i].acepta2 == "null"){
-            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
-              acepta2: firebase.auth().currentUser.displayName,
-              acepta2Email: firebase.auth().currentUser.email
-            });
-          } else if(arrayObjetos[i].acepta3 == "null"){
-            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
-              acepta3: firebase.auth().currentUser.displayName,
-              acepta3Email: firebase.auth().currentUser.email
-            });
           }else{
             var myPopup = $ionicPopup.show({
-	            template: '<center>El desafio ya fue aceptado por tres personas</center>',
+	            template: '<center>El desafio ya fue aceptado por alguien</center>',
 	            title: 'No hay espacio'
 	          });
             $timeout(function(){
@@ -160,7 +150,7 @@ angular.module('app.controllers', [])
             }, 3000);
             return;
           }
-          location.href = '#/desafioAceptado';
+          location.href = '#/inicio/desafioActual';
         }
       }
 
