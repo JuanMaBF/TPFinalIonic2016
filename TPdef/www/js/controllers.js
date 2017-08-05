@@ -301,11 +301,6 @@ angular.module('app.controllers', [])
     var arrayDesafios = $.map(snapshot.val(), function(value, index) {
       return [value];
     });
-    
-      if(des.creador == firebase.auth().currentUser.email || des.acepta1Email == firebase.auth().currentUser.email){
-        tiempo = des.tiempo;
-      }
-    });
 
     firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
       usuarios = snapshot.val();
@@ -320,6 +315,7 @@ angular.module('app.controllers', [])
           arrayDesafios.forEach(des => {
             if(arrayObjetos[i].desafio == des.nombre){
               /*********/
+              tiempo = des.tiempo;
               if(tiempo != 0){
                 firebase.database().ref('Desafios/').on('value', function(snapshot){
                   var desafioActual;
@@ -347,7 +343,13 @@ angular.module('app.controllers', [])
           });
         }
       }
-      
+
+      $timeout(function(){
+        if(){
+          cargarPagSinDesafio();  
+        }
+      }, 1000);
+
     });
   });
 
