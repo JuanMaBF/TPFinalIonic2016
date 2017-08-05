@@ -237,28 +237,54 @@ angular.module('app.controllers', [])
       arrayObjetos.forEach(usr => {
         if(usr.email == firebase.auth().currentUser.email){
           dineroActual = usr.dinero;
-          console.log('usr.dinero: ' + usr.dinero);
+          desafioActual = usr.desafio;
         }
       });
-      console.log('dineroActual: ' + dineroActual);
-      console.log('dinero: ' + dinero);
       if(dinero <= dineroActual){
-        firebase.database().ref('Desafios/').push({
-          nombre: nombre,
-          dinero: dinero,
-          tiempo: tiempo,
-          tiempoStr: tiempoStr,
-          creador: firebase.auth().currentUser.email,
-          creadorName: firebase.auth().currentUser.displayName,
-          acepta1: "null",
-          acepta2: "null",
-          acepta3: "null",
-          acepta1Email: "null",
-          acepta2Email: "null",
-          acepta3Email: "null",
-          resultado: "null"
-        });
-        location.href="#/inicio/desafioCreado";
+          if(desafioActual == "null"){
+            firebase.database().ref('Desafios/').push({
+              nombre: nombre,
+              dinero: dinero,
+              tiempo: tiempo,
+              tiempoStr: tiempoStr,
+              creador: firebase.auth().currentUser.email,
+              creadorName: firebase.auth().currentUser.displayName,
+              acepta1: "null",
+              acepta2: "null",
+              acepta3: "null",
+              acepta1Email: "null",
+              acepta2Email: "null",
+              acepta3Email: "null",
+              resultado: "null"
+            });
+
+            firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
+              usuarios = snapshot.val();
+              var arrayObjetos = $.map(usuarios, function(value, index) {
+                return [value];
+              });
+              var arrayIndex = $.map(usuarios, function(value, index) {
+                return [index];
+              });
+              for(i=0; i<arrayObjetos.length; i++){
+                if(arrayObjetos[i].email == firebase.auth().currentUser.email){
+                  firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
+                    desafio: nombre
+                  });
+                }
+              }
+            });
+
+            location.href="#/inicio/desafioCreado";
+          } else {
+            var myPopup = $ionicPopup.show({
+              template: '<center>Usted ya tiene un desafio aceptado</center>',
+              title: 'Ya hay un desafio'
+            });
+            $timeout(function(){
+              myPopup.close();
+            }, 3000);
+          }
       }else{
         var myPopup = $ionicPopup.show({
           template: '<center>Usted no posee dinero suficiente</center>',
@@ -619,7 +645,8 @@ angular.module('app.controllers', [])
         firebase.database().ref('Usuarios/').push({
           nombre: $scope.regData.nombre,
           email: email,
-          dinero: 3000
+          dinero: 3000,
+          desafio: "null"
         });
 
         var myPopup = $ionicPopup.show({
