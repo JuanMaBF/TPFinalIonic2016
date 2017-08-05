@@ -60,12 +60,12 @@ angular.module('app.routes', [])
     }
   })
 
-  .state('inicio.desafioCreado', {
-    url: '/desafioCreado',
+  .state('inicio.desafioActual', {
+    url: '/desafioActual',
     views: {
       'tab7': {
-        templateUrl: 'templates/desafioCreado.html',
-        controller: 'desafioCreadoCtrl'
+        templateUrl: 'templates/desafioActual.html',
+        controller: 'desafioActualCtrl'
       }
     }
   })
