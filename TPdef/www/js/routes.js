@@ -40,6 +40,16 @@ angular.module('app.routes', [])
     }
   })
 
+  .state('inicio.listaDesafios', {
+    url: '/listaDesafios',
+    views: {
+      'tab6': {
+        templateUrl: 'templates/listaDesafios.html',
+        controller: 'listaDesafiosCtrl'
+      }
+    }
+  })
+
   .state('desafioCreado', {
     url: '/desafioCreado',
     templateUrl: 'templates/desafioCreado.html',
