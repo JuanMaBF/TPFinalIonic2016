@@ -684,9 +684,83 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('listaDesafiosCtrl', function ($scope, $stateParams, $ionicPopup) {
+.controller('listaDesafiosCtrl', function ($scope, $stateParams, $ionicPopup, $timeout, $location) {
 
-  /*LISTA DE DESAFIOS*/
+  
+  firebase.database().ref('Desafios/').on('value', function(snapshot){
+    $('#desafiosActuales').html('');
+    var el = '';
+    if(snapshot.val() != null){
+      desafios = snapshot.val();
+      var arrayObjetos = $.map(desafios, function(value, index) {
+        return [value];
+      });
+      var count = 0;
+      console.log(arrayObjetos);
+      arrayObjetos.forEach(function(element){
+        if(element.terminado == "null"){
+          el += "<div id=\"desafios-container"+count+"\">";
+          el += "<div class=\"spacer\" style=\"width: 300px; height: 24px;\"></div>";
+          el += "<ion-list id=\"desafios-list9\">";
+          el += "<ion-item class=\"item-avatar\" id=\"desafios-list-item18\">";
+          el += "<h2>NOMBRE: " + element.nombre.toString() +"</h2>";
+          el += "<p>Cuesta " + element.dinero.toString() +".</p>";
+          el += "<p>Dura " + element.tiempoStr.toString() +".</p>";
+          el += "<p>Creado por: <b>" + element.creador.toString() +"</b>.</p>";
+          el += "</ion-item>";
+          el += "</ion-list>";
+          el += "</div>";
+          count++;
+        }
+      });
+      if(count != 0){
+      }else{
+        el = "<ion-item id=\"usuariosOnline-list-item11\">No hay desafios...</ion-item>";
+      }
+    }else{
+      el = "<ion-item id=\"usuariosOnline-list-item11\">No hay desafios...</ion-item>";
+    }
+    el += "<a href=\"#/inicio/crearDesafio\" id=\"login-button2\" class=\"button button-energized  button-block\">CREAR DESAFIO</a>"
+    $('#desafiosActuales').html(el);
+    compilarElemento("#desafiosActuales");
+  });
+
+  $scope.aceptar = function(){
+    var nombreDesafio = $('.classInputContainer').find('.ng-valid-parse').val();
+
+    firebase.database().ref('Desafios/').once('value').then(function(snapshot){
+
+      var arrayObjetos = $.map(snapshot.val(), function(value, index) {
+        return [value];
+      });
+      var arrayIndex = $.map(snapshot.val(), function(value, index) {
+        return [index];
+      });
+
+      for(i=0; i<arrayObjetos.length; i++){
+        if(arrayObjetos[i].nombre == nombreDesafio){
+
+          if(arrayObjetos[i].acepta1 == "null"){
+            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
+              acepta1: firebase.auth().currentUser.displayName,
+              acepta1Email: firebase.auth().currentUser.email
+            });
+          }else{
+            var myPopup = $ionicPopup.show({
+              template: '<center>El desafio ya fue aceptado por alguien</center>',
+              title: 'No hay espacio'
+            });
+            $timeout(function(){
+              myPopup.close();
+            }, 3000);
+            return;
+          }
+          location.href = '#/inicio/desafioActual';
+        }
+      }
+
+    });
+  }
 
 })
 
