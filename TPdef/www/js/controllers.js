@@ -251,7 +251,7 @@ angular.module('app.controllers', [])
               creadorName: firebase.auth().currentUser.displayName,
               acepta1: "null",
               acepta1Email: "null",
-              resultado: "null"
+              resultado: Math.round(Math.random())
             });
 
             firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
@@ -294,46 +294,64 @@ angular.module('app.controllers', [])
   }
 })
    
-.controller('desafioActualCtrl', function ($scope, $stateParams, $timeout) {
+.controller('desafioActualCtrl', function ($scope, $stateParams, $timeout, $ionicPopup) {
 
   firebase.database().ref('Desafios/').once('value').then(function(snapshot){
     var tiempo = 0;
     var arrayDesafios = $.map(snapshot.val(), function(value, index) {
       return [value];
     });
-    arrayDesafios.forEach(des => {
+    
       if(des.creador == firebase.auth().currentUser.email || des.acepta1Email == firebase.auth().currentUser.email){
         tiempo = des.tiempo;
       }
     });
 
-    if(tiempo != 0){
-      firebase.database().ref('Desafios/').on('value', function(snapshot){
-        var desafioActual;
-        var arrayDesafios = $.map(snapshot.val(), function(value, index) {
-          return [value];
-        });
-        arrayDesafios.forEach(des => {
-          if(des.creador == firebase.auth().currentUser.email){
-            desafioActual = des;
-          }
-        });
-        var el = '';
-        if(desafioActual.acepta1 != "null"){
-          el += "<ion-item id=\"desafioActual-list-item25\">"+ desafioActual.acepta1 +"</ion-item>";
+    firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
+      usuarios = snapshot.val();
+      var arrayObjetos = $.map(usuarios, function(value, index) {
+        return [value];
+      });
+      var arrayIndex = $.map(usuarios, function(value, index) {
+        return [index];
+      });
+      for(i=0; i<arrayObjetos.length; i++){
+        if(arrayObjetos[i].email == firebase.auth().currentUser.email){
+          arrayDesafios.forEach(des => {
+            if(arrayObjetos[i].desafio == des.nombre){
+              /*********/
+              if(tiempo != 0){
+                firebase.database().ref('Desafios/').on('value', function(snapshot){
+                  var desafioActual;
+                  var arrayDesafios = $.map(snapshot.val(), function(value, index) {
+                    return [value];
+                  });
+                  arrayDesafios.forEach(des => {
+                    if(des.creador == firebase.auth().currentUser.email){
+                      desafioActual = des;
+                    }
+                  });
+                  var el = '';
+                  if(desafioActual.acepta1 != "null"){
+                    el += "<ion-item id=\"desafioActual-list-item25\">"+ desafioActual.acepta1 +"</ion-item>";
+                  }
+                  if(el == ''){
+                    el += "<ion-item id=\"desafioActual-list-item27\">NADIE ACEPTA AUN EL DESAFIO</ion-item>";
+                  }
+                  $('#desafioActual-list13').html(el);
+                  compilarElemento('#desafioActual-list13');
+                });    
+              }
+              /*********/
+            }
+          });
         }
-        if(el == ''){
-          el += "<ion-item id=\"desafioActual-list-item27\">NADIE ACEPTA AUN EL DESAFIO</ion-item>";
-        }
-        $('#desafioActual-list13').html(el);
-        compilarElemento('#desafioActual-list13');
-      });    
-    }
-
+      }
+      
+    });
   });
 
   $scope.resultado = function(){
-    var resultado = Math.round(Math.random());
     firebase.database().ref('Desafios/').once('value').then(function(snapshot){
       var desafioActual;
       var arrayDesafios = $.map(snapshot.val(), function(value, index) {
@@ -357,6 +375,23 @@ angular.module('app.controllers', [])
       if(resultado == 0){ //Gana el creador
         aCreador += desafioActual.dinero;
         aAcepta1 -= desafioActual.dinero;
+        if(desafioActual.creador ==firebase.auth().currentUser.email){
+          var myPopup = $ionicPopup.show({
+          template: '<center>Ganaste :)</center>',
+          title: 'Winner'
+          });
+          $timeout(function(){
+            myPopup.close();
+          }, 3000);
+        } else {
+          var myPopup = $ionicPopup.show({
+          template: '<center>Perdiste :(</center>',
+          title: 'Loser'
+          });
+          $timeout(function(){
+            myPopup.close();
+          }, 3000);
+        }
       }else if(resultado == 1){ //Gana el que aceptó
         aCreador -= desafioActual.dinero;
         aAcepta1 += desafioActual.dinero;
@@ -371,25 +406,25 @@ angular.module('app.controllers', [])
           return [index];
         });
         for(i=0; i<arrayObjetos.length; i++){
-          if(arrayObjetos[i].email == firebase.auth().currentUser.email){
+          if(arrayObjetos[i].email == desafioActual.creador){
             var nuevoDinero = arrayObjetos[i].dinero + aCreador;
             firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
               dinero: nuevoDinero,
-              desafio: "null"
+              desafio: "null" //Vuelven a ser nulos
             });
           }
-          if((arrayObjetos[i].email == desafioActual.acepta1Email) && (cantidadDeJugadores > 0)){
+          if(arrayObjetos[i].email == desafioActual.acepta1Email){
             var nuevoDinero = arrayObjetos[i].dinero + aAcepta1;
             console.log(nuevoDinero);
             firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
               dinero: nuevoDinero,
-              desafio: "null"
+              desafio: "null" //Vuelven a ser nulos
             });
           }
         }
       });
 
-      firebase.database().ref('Desafios/').once('value').then(function(snapshot){
+      /*firebase.database().ref('Desafios/').once('value').then(function(snapshot){
         var arrayObjetos = $.map(snapshot.val(), function(value, index) {
           return [value];
         });
@@ -403,7 +438,7 @@ angular.module('app.controllers', [])
             });
           }
         }
-      });
+      })*/
       location.href="#/inicio/usuariosOnline";
     });
   }
