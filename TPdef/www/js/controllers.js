@@ -89,8 +89,9 @@ angular.module('app.controllers', [])
         return [value];
       });
       var count = 0;
+      console.log(arrayObjetos);
       arrayObjetos.forEach(function(element){
-        if(element.resultado == "null"){
+        if(element.terminado == "null"){
           el += "<div id=\"desafios-container"+count+"\">";
           el += "<div class=\"spacer\" style=\"width: 300px; height: 24px;\"></div>";
           el += "<ion-list id=\"desafios-list9\">";
@@ -254,7 +255,8 @@ angular.module('app.controllers', [])
               acepta1Email: "null",
               resultado: Math.round(Math.random()),
               minutes: date.getMinutes(),
-              seconds: date.getSeconds()
+              seconds: date.getSeconds(),
+              terminado: "null"
             });
 
             firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
@@ -318,6 +320,11 @@ angular.module('app.controllers', [])
           arrayDesafios.forEach(des => {
             if(arrayObjetos[i].desafio == des.nombre){
               /*********/
+
+              firebase.database().ref('Desafios/' + arrayIndex[i]).update({
+                terminado: "si"
+              });
+
               tiempo = des.tiempo;
               firebase.database().ref('Desafios/').on('value', function(snapshot){
                 var desafioActual;
@@ -351,7 +358,6 @@ angular.module('app.controllers', [])
           $scope.cargarPagSinDesafio();  
         }
       }, 500);
-
     });
   });
 
