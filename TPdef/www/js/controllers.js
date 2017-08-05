@@ -402,13 +402,22 @@ angular.module('app.controllers', [])
           if(desafioActual.resultado == 0){ //Gana el creador
             aCreador += desafioActual.dinero;
             aAcepta1 -= desafioActual.dinero;
-            if(desafioActual.creador ==firebase.auth().currentUser.email){
+            if(desafioActual.creador ==firebase.auth().currentUser.email && desafioActual.acepta1 != "null"){
               var myPopup = $ionicPopup.show({
               template: '<center>Ganaste :)</center>',
               title: 'Winner'
               });
               $timeout(function(){
                 myPopup.close();
+              }, 3000);
+            } else if (desafioActual.acepta1 == "null") {
+              var myPopup = $ionicPopup.show({
+              template: '<center>Nadie aceptó el desafio :(</center>',
+              title: 'Nadie me quiere, todos me odian'
+              });
+              $timeout(function(){
+                myPopup.close();
+                location.href="#/inicio/usuariosOnline";
               }, 3000);
             } else {
               var myPopup = $ionicPopup.show({
