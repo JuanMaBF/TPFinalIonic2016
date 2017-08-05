@@ -403,31 +403,13 @@ angular.module('app.controllers', [])
             aCreador += parseInt(desafioActual.dinero);
             aAcepta1 -= parseInt(desafioActual.dinero);
             if(desafioActual.creador ==firebase.auth().currentUser.email && desafioActual.acepta1 != "null"){
-              var myPopup = $ionicPopup.show({
-              template: '<center>Ganaste :)</center>',
-              title: 'Winner'
-              });
-              $timeout(function(){
-                myPopup.close();
-              }, 3000);
+              alert('Ganaste :)');
             } else if (desafioActual.acepta1 == "null") {
-              var myPopup = $ionicPopup.show({
-              template: '<center>Nadie aceptó el desafio :(</center>',
-              title: 'Nadie me quiere, todos me odian'
-              });
+              alert('Nadie aceptó el desafio :(');
               aAcepta1 = 0;
-              $timeout(function(){
-                myPopup.close();
-              }, 3000);
               location.href="#/inicio/usuariosOnline";
             } else {
-              var myPopup = $ionicPopup.show({
-              template: '<center>Perdiste :(</center>',
-              title: 'Loser'
-              });
-              $timeout(function(){
-                myPopup.close();
-              }, 3000);
+              alert('Perdiste :(');
             }
           }else if(desafioActual.resultado == 1){ //Gana el que aceptó
             aCreador -= parseInt(desafioActual.dinero);
@@ -444,7 +426,7 @@ angular.module('app.controllers', [])
             });
             for(i=0; i<arrayObjetos.length; i++){
               if(arrayObjetos[i].email == desafioActual.creador){
-                var nuevoDinero = arrayObjetos[i].dinero + aCreador;
+                var nuevoDinero = parseInt(arrayObjetos[i].dinero) + parseInt(aCreador);
                 firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
                   dinero: nuevoDinero,
                   desafio: "null" //Vuelven a ser nulos
