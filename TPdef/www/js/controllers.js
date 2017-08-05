@@ -254,7 +254,7 @@ angular.module('app.controllers', [])
               acepta1Email: "null",
               resultado: Math.round(Math.random()),
               minutes: date.getMinutes(),
-              hour: date.getHours()
+              seconds: date.getSeconds()
             });
 
             firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
@@ -338,7 +338,7 @@ angular.module('app.controllers', [])
                 }
                 $('#desafioActual-list13').html(el);
                 compilarElemento('#desafioActual-list13');
-                iniciarReloj(desafioActual.tiempo, desafioActual.minutes, desafioActual.hour);
+                iniciarReloj(desafioActual.tiempo, desafioActual.minutes, desafioActual.seconds);
               });    
               /*********/
             }
@@ -355,21 +355,24 @@ angular.module('app.controllers', [])
     });
   });
 
-  function iniciarReloj(milisegundos, minutos, horas){
+  function iniciarReloj(milisegundos, minutos, segundos){
     var totalObj = minutos*(60000);
-    totalObj += horas*(360000) + milisegundos;
+    totalObj += segundos*(1000) + milisegundos;
 
     var date = new Date();
     var minutes = date.getMinutes();
-    var hour = date.getHours();
-    var totalReal = minutes*(60000) + hour*(360000);
+    var seconds = date.getSeconds();
+    var totalReal = minutes*(60000) + seconds*(1000);
     var diferencia = totalObj - totalReal;
     $("#contador").html('00:' + diferencia/1000);
     $timeout(function(){
       diferencia -= 1000;
-      if(diferencia > 0){
+      if(diferencia > 0 && diferencia > -10){
         console.log(diferencia);
-        iniciarReloj(milisegundos, minutos, horas)
+        iniciarReloj(milisegundos, minutos, segundos)
+      }else{
+        $("#contador").html('00:00');
+        $("#button-ver-resultado").prop("disabled", false);
       }
     }, 1000);
   }
@@ -391,88 +394,65 @@ angular.module('app.controllers', [])
         return [value];
       });
       arrayDesafios.forEach(des => {
-        if( (des.creador == firebase.auth().currentUser.email || des.acepta1Email == firebase.auth().currentUser.email) 
-            && (des.resultado == "null") ){
+        if( (des.creador == firebase.auth().currentUser.email || des.acepta1Email == firebase.auth().currentUser.email)){
           desafioActual = des;
+          var aCreador = 0;
+          var aAcepta1 = 0;
+
+          if(desafioActual.resultado == 0){ //Gana el creador
+            aCreador += desafioActual.dinero;
+            aAcepta1 -= desafioActual.dinero;
+            if(desafioActual.creador ==firebase.auth().currentUser.email){
+              var myPopup = $ionicPopup.show({
+              template: '<center>Ganaste :)</center>',
+              title: 'Winner'
+              });
+              $timeout(function(){
+                myPopup.close();
+              }, 3000);
+            } else {
+              var myPopup = $ionicPopup.show({
+              template: '<center>Perdiste :(</center>',
+              title: 'Loser'
+              });
+              $timeout(function(){
+                myPopup.close();
+              }, 3000);
+            }
+          }else if(desafioActual.resultado == 1){ //Gana el que aceptó
+            aCreador -= desafioActual.dinero;
+            aAcepta1 += desafioActual.dinero;
+          }
+
+          firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
+            usuarios = snapshot.val();
+            var arrayObjetos = $.map(usuarios, function(value, index) {
+              return [value];
+            });
+            var arrayIndex = $.map(usuarios, function(value, index) {
+              return [index];
+            });
+            for(i=0; i<arrayObjetos.length; i++){
+              if(arrayObjetos[i].email == desafioActual.creador){
+                var nuevoDinero = arrayObjetos[i].dinero + aCreador;
+                firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
+                  dinero: nuevoDinero,
+                  desafio: "null" //Vuelven a ser nulos
+                });
+              }
+              if(arrayObjetos[i].email == desafioActual.acepta1Email){
+                var nuevoDinero = arrayObjetos[i].dinero + aAcepta1;
+                console.log(nuevoDinero);
+                firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
+                  dinero: nuevoDinero,
+                  desafio: "null" //Vuelven a ser nulos
+                });
+              }
+            }
+          });
+          location.href="#/inicio/usuariosOnline";
         }
       });
-
-      var cantidadDeJugadores = 0;
-      if(desafioActual.acepta1 != "null"){
-        cantidadDeJugadores++;
-      }
-
-      var aCreador = 0;
-      var aAcepta1 = 0;
-
-      if(resultado == 0){ //Gana el creador
-        aCreador += desafioActual.dinero;
-        aAcepta1 -= desafioActual.dinero;
-        if(desafioActual.creador ==firebase.auth().currentUser.email){
-          var myPopup = $ionicPopup.show({
-          template: '<center>Ganaste :)</center>',
-          title: 'Winner'
-          });
-          $timeout(function(){
-            myPopup.close();
-          }, 3000);
-        } else {
-          var myPopup = $ionicPopup.show({
-          template: '<center>Perdiste :(</center>',
-          title: 'Loser'
-          });
-          $timeout(function(){
-            myPopup.close();
-          }, 3000);
-        }
-      }else if(resultado == 1){ //Gana el que aceptó
-        aCreador -= desafioActual.dinero;
-        aAcepta1 += desafioActual.dinero;
-      }
-
-      firebase.database().ref('Usuarios/').once('value').then(function(snapshot){
-        usuarios = snapshot.val();
-        var arrayObjetos = $.map(usuarios, function(value, index) {
-          return [value];
-        });
-        var arrayIndex = $.map(usuarios, function(value, index) {
-          return [index];
-        });
-        for(i=0; i<arrayObjetos.length; i++){
-          if(arrayObjetos[i].email == desafioActual.creador){
-            var nuevoDinero = arrayObjetos[i].dinero + aCreador;
-            firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
-              dinero: nuevoDinero,
-              desafio: "null" //Vuelven a ser nulos
-            });
-          }
-          if(arrayObjetos[i].email == desafioActual.acepta1Email){
-            var nuevoDinero = arrayObjetos[i].dinero + aAcepta1;
-            console.log(nuevoDinero);
-            firebase.database().ref('Usuarios/' + arrayIndex[i]).update({
-              dinero: nuevoDinero,
-              desafio: "null" //Vuelven a ser nulos
-            });
-          }
-        }
-      });
-
-      /*firebase.database().ref('Desafios/').once('value').then(function(snapshot){
-        var arrayObjetos = $.map(snapshot.val(), function(value, index) {
-          return [value];
-        });
-        var arrayIndex = $.map(snapshot.val(), function(value, index) {
-          return [index];
-        });
-        for(i=0; i<arrayObjetos.length; i++){
-          if(arrayObjetos[i].creador == firebase.auth().currentUser.email){
-            firebase.database().ref('Desafios/' + arrayIndex[i]).update({
-              resultado: resultado
-            });
-          }
-        }
-      })*/
-      location.href="#/inicio/usuariosOnline";
     });
   }
 
