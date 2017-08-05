@@ -258,7 +258,7 @@ angular.module('app.controllers', [])
           acepta3Email: "null",
           resultado: "null"
         });
-        location.href="#/desafioCreado";
+        location.href="#/inicio/desafioCreado";
       }else{
         var myPopup = $ionicPopup.show({
           template: '<center>Usted no posee dinero suficiente</center>',
@@ -653,6 +653,18 @@ angular.module('app.controllers', [])
         console.info(error);
       });
   }
+
+})
+
+.controller('listaDesafiosCtrl', function ($scope, $stateParams, $ionicPopup) {
+
+  /*LISTA DE DESAFIOS*/
+
+})
+
+.controller('verDesafioCtrl', function ($scope, $stateParams, $ionicPopup) {
+
+  /*VER DESAFIO PUNTUAL*/
 
 });
 

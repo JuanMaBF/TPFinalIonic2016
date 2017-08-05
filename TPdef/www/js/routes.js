@@ -50,10 +50,24 @@ angular.module('app.routes', [])
     }
   })
 
-  .state('desafioCreado', {
+  .state('inicio.verDesafio', {
+    url: '/verDesafio',
+    views: {
+      'tab7': {
+        templateUrl: 'templates/verDesafio.html',
+        controller: 'verDesafioCtrl'
+      }
+    }
+  })
+
+  .state('inicio.desafioCreado', {
     url: '/desafioCreado',
-    templateUrl: 'templates/desafioCreado.html',
-    controller: 'desafioCreadoCtrl'
+    views: {
+      'tab7': {
+        templateUrl: 'templates/desafioCreado.html',
+        controller: 'desafioCreadoCtrl'
+      }
+    }
   })
 
   .state('desafioAceptado', {
